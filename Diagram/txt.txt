@@ -1,0 +1,49 @@
+Cmd:
+- cdk init app --language=typescript
+
+Email: 
+- SES and Sendgrid
+
+SMS
+- Twillio
+
+Transaction:
+- if a random MS wants to send sms or email
+- just ask the Transaction MS to do so 
+- don't integrate it in to the MS it self but outsource it to the Transaction MS
+
+Compare Transaction vs Product
+- both use CDK 
+- but Transaction Stack is not a REST api 
+- we only create lambdas but they are triggered via SQS / SNS 
+
+What are we going to do? 
+1) create lambdas
+2) hook up the lambdas to the handlers
+3) create X to trigger the lambdas 
+
+Packages: 
+1- yarn add twilio
+2- yarn add aws-sdk
+3- yarn add aws-lambda
+4- yarn add -D @types/aws-lambda 
+5- yarn add class-transformer class-validator
+6- yarn add @sendgrid/mail
+
+Handlers 
+- the handlers receive an SQSEvent 
+- How to handle SQSEvent instead of REST API Event? Like Product and Transaction? 
+
+Use the topic inside the User MS (serverless.yml)
+
+environment: 
+  NOTIFY_TOPIC: 
+    "Fn::ImportValue": "notifySvcArn"       // we use function "Fn" to get the topic via the arn
+iamRoleStatements: 
+  - Effect: "Allow"
+    Action: 
+      - "sns:Publish"
+    Resource:
+      - !Ref CustomerTopic                  // created inside the User MS
+      - "Fn::ImportValue": "notifySvcArn"   
+
